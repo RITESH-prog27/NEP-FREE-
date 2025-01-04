@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetMirrorApp</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: black;
+            color: white;
+            margin: 0;
+            position: relative;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+            border-radius: 5px;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            margin-left: 50px;
+        }
+
+        .search-bar {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .search-button:hover {
+            background-color: #f40612;
+        }
+
+        .app-gpt-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .app-gpt-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Main Content - Grid Layout for Apps and Games */
+        .main-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 columns */
+            gap: 20px;
+            padding: 80px 20px 40px; /* Offset for the navbar and space at the bottom */
+        }
+
+        .app-container {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .app-container:hover {
+            transform: translateY(-10px);
+        }
+
+        .app-container img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .app-name {
+            color: red;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .rating {
+            color: #f1c40f;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .download-btn {
+            padding: 10px 20px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #f40612;
+        }
+
+        /* Chat Section Styles */
+        .chat-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            display: none; /* Initially hidden */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+        }
+
+        .chat-content {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-input {
+            padding: 10px;
+            width: 70%;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            color: black;
+        }
+
+        .send-button {
+            padding: 10px 15px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .send-button:hover {
+            background-color: #f40612;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+        }
+
+        .user-message {
+            background-color: #4CAF50;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background-color: #f1c40f;
+            margin-right: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="#">Home</a>
+        
+        <!-- Search Bar in Navbar -->
+        <div class="search-container">
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search for apps or games...">
+            <button class="search-button" onclick="searchItems()">Search</button>
+        </div>
+        
+        <a href="#">About</a>
+
+        <!-- App GPT Button -->
+        <button class="app-gpt-btn" onclick="toggleChat()">App GPT</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container" id="appsContainer">
+        <!-- App 1: NetMirrorApp -->
+        <div class="app-container" data-name="NetMirrorApp">
+            <img src="net.jpg" alt="NetMirrorApp">
+            <div class="app-name">NetMirrorApp</div>
+            <div class="rating">Rating: 8/10</div>
+            <a href="https://pcmirror.cc/home">
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+
+        <!-- Add more apps as necessary -->
+         <!-- App 2: MoviesHub -->
+        <div class="app-container" data-name="MoviesHub">
+            <img src="movie.jpg" alt="MoviesHub">
+            <div class="app-name">MoviesHub</div>
+            <div class="rating">Rating: 6.5/10</div>
+            <a href="https://www.mediafire.com/file_premium/k4imagfi5xkejs0/MOVIES_HUB_Premium_v2.1.4p_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 3: TikTok -->
+        <div class="app-container" data-name="TikTok">
+            <img src="tik.jpj.png" alt="TikTok">
+            <div class="app-name">TikTok</div>
+            <div class="rating">Rating: 5.7/10</div>
+            <a href="https://www.mediafire.com/file_premium/w5shid9s45jj0jm/TikTok_TV_v12.2.62.0_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 4: Cinema -->
+        <div class="app-container" data-name="Cinema">
+            <img src="Cinema.jpg" alt="Cinema">
+            <div class="app-name">Cinema</div>
+            <div class="rating">Rating: 4.9/10</div>
+            <a href="https://www.mediafire.com/file_premium/gvtyj4y5xqez84g/Cinema_Vip_v4.0.1_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 5: Shadow Fight 2 -->
+        <div class="app-container" data-name="Shadow Fight 2">
+            <img src="Shadow.jpg" alt="Shadow Fight 2">
+            <div class="app-name">Shadow Fight 2</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://www.mediafire.com/file_premium/27s26dc050t8olp/Shadow_Fight-2_v2.40.5_Mod_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 6: Minecraft -->
+        <div class="app-container" data-name="Minecraft">
+            <img src="Mine.jpg" alt="Minecraft">
+            <div class="app-name">Minecraft</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://luchitoapk.com/minecraft/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 7: shadow-knigh -->
+        <div class="app-container" data-name="shadow-knight">
+            <img src="knight.jpg" alt="shadow-knight">
+            <div class="app-name">shadow-knight</div>
+            <div class="rating">Rating: 5.2/10</div>
+            <a href="https://luchitoapk.com/shadow-knight-mod-apk/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 8: youtube-music-premium -->
+        <div class="app-container" data-name="youtube-music-premium">
+            <img src="youtube.jpg" alt="youtube-music-premium">
+            <div class="app-name">youtube-music-premium</div>
+            <div class="rating">Rating: 7.9/10</div>
+            <a href="https://luchitoapk.com/youtube-music-premium/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+            </div>
+
+             <!-- App 9: duolingo-mod -->
+        <div class="app-container" data-name="duolingo-mod">
+            <img src="duo.jpg" alt="duolingo-mod">
+            <div class="app-name">duolingo-mod</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://luchitoapk.com/duolingo-mod-apk/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 10: anime-cast -->
+        <div class="app-container" data-name="anime-cast">
+            <img src="anime.jpg" alt="anime-cast">
+            <div class="app-name">anime-cast</div>
+            <div class="rating">Rating: 10/10</div>
+            <a href="https://luchitoapk.com/anime-cast-mod-apk-sin-anuncios/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 11: farlight-84 -->
+         <div class="app-container" data-name="farlight-84">
+            <img src="far.jpg" alt="farlight-84">
+            <div class="app-name">farlight-84</div>
+            <div class="rating">Rating: 7.9/10</div>
+            <a href="https://luchitoapk.com/farlight-84-mod/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 12: Netflix Premium -->
+        <div class="app-container" data-name="Netflix Premium">
+            <img src="flix.jpg" alt="Netflix Premium">
+            <div class="app-name">Netflix Premium</div>
+            <div class="rating">Rating: 10/10</div>
+            <a href="https://luchitoapk.com/netflix-premium/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 13: YouTube Premium -->
+        <div class="app-container" data-name="YouTube Premium">
+            <img src="tube.jpg" alt="YouTube Premium">
+            <div class="app-name">YouTube Premium</div>
+            <div class="rating">Rating: 10/10</div>
+            <a href="https://luchitoapk.com/youtube-premium-sin-anuncios/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 14: GTA: San Andreas – NETFLIX Apk (juego Completo) -->
+        <div class="app-container" data-name="GTA: San Andreas – NETFLIX Apk (juego Completo)">
+            <img src="gta.jpg" alt="GTA: San Andreas – NETFLIX Apk (juego Completo)">
+            <div class="app-name">GTA: San Andreas – NETFLIX Apk (juego Completo)</div>
+            <div class="rating">Rating: 10/10</div>
+            <a href="https://luchitoapk.com/gta-san-andreas-netflix-apk/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 15: FC Mobile 24 MOD Apk -->
+        <div class="app-container" data-name="FC Mobile 24 MOD Apk">
+            <img src="fifa.jpg" alt="FC Mobile 24 MOD Apk">
+            <div class="app-name">FC Mobile 24 MOD Apk</div>
+            <div class="rating">Rating: 10/10</div>
+            <a href="https://luchitoapk.com/fc-mobile-24-apk/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 16: Coin Master Mod Apk (Unlimited Cards, Unlocked) -->
+         <div class="app-container" data-name="Coin Master Mod Apk (Unlimited Cards, Unlocked)">
+            <img src="coin.jpg" alt="Coin Master Mod Apk (Unlimited Cards, Unlocked)">
+            <div class="app-name">Coin Master Mod Apk (Unlimited Cards, Unlocked)</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://luchitoapk.com/coin-master-mod-apk/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 17: Miami crime simulator Mod (Dinero Ilimitado) -->
+        <div class="app-container" data-name="Miami crime simulator Mod (Dinero Ilimitado)">
+            <img src="mi.jpg" alt="Miami crime simulator Mod (Dinero Ilimitado)">
+            <div class="app-name">Miami crime simulator Mod (Dinero Ilimitado)</div>
+            <div class="rating">Rating: 3/10</div>
+            <a href="https://luchitoapk.com/miami-crime-simulator/download/0/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 18: Telegram Premium Apk (Premium, Optimized, Lite) -->
+        <div class="app-container" data-name="Telegram Premium Apk (Premium, Optimized, Lite)">
+            <img src="tele.jpg" alt="Telegram Premium Apk (Premium, Optimized, Lite)">
+            <div class="app-name">Telegram Premium Apk (Premium, Optimized, Lite)</div>
+            <div class="rating">Rating: 6/10</div>
+            <a href="https://www.mediafire.com/file_premium/d21j9nniysmrfhh/Telegram_Premium_v11.6.1_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 19: KineMaster Mod Apk (Pro desbloqueado) -->
+         <div class="app-container" data-name="KineMaster Mod Apk (Pro desbloqueado)">
+            <img src="kine.jpg" alt="KineMaster Mod Apk (Pro desbloqueado)">
+            <div class="app-name">KineMaster Mod Apk (Pro desbloqueado)</div>
+            <div class="rating">Rating: 6/10</div>
+            <a href="https://www.mediafire.com/file_premium/dbz36gxvgj6holg/KineMaster_v7.4.17.33452._luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 20: CapCut Premium (Unlocked) -->
+        <div class="app-container" data-name="CapCut Premium (Unlocked)">
+            <img src="capcut.jpg" alt="CapCut Premium (Unlocked)">
+            <div class="app-name">CapCut Premium (Unlocked)</div>
+            <div class="rating">Rating: 7.1/10</div>
+            <a href="https://www.mediafire.com/file_premium/twjy70ab5nz7dxw/CapCut_Pro_v13.0.0_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 21: Spotify Premium -->
+         <div class="app-container" data-name="Spotify Premium">
+            <img src="spo.jpg" alt="Spotify Premium">
+            <div class="app-name">Spotify Premium</div>
+            <div class="rating">Rating: 6.9/10</div>
+            <a href="https://www.mediafire.com/file_premium/wqg2y1ip4v24dpv/Spotify_TV_Premium_v1.85.2_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 22: Spotify x-->
+         <div class="app-container" data-name="Spotify x">
+            <img src="sap.jpg" alt="Spotify x">
+            <div class="app-name">Spotify x</div>
+            <div class="rating">Rating: 5.3/10</div>
+            <a href="https://www.mediafire.com/file/fjbd8tyx1a4fwbz/Spotify_X_Premium_v19.10.80.1-%2540luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 23: Spotify Lite Mod Apk (Premium, Desbloqueado)-->
+        <div class="app-container" data-name="Spotify Lite Mod Apk (Premium, Desbloqueado)">
+            <img src="soap.jpg" alt="Spotify Lite Mod Apk (Premium, Desbloqueado)">
+            <div class="app-name">Spotify Lite Mod Apk (Premium, Desbloqueado)</div>
+            <div class="rating">Rating: 5.3/10</div>
+            <a href="https://www.mediafire.com/file_premium/pzdjhw02qtp4k4u/Spotify_Lite_Premium_v1.9.0.72404_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 24: Terabox MOD APK (Premium Unlocked)-->
+        <div class="app-container" data-name="Terabox MOD APK (Premium Unlocked)">
+            <img src="tera.jpg" alt="Terabox MOD APK (Premium Unlocked)">
+            <div class="app-name">Terabox MOD APK (Premium Unlocked)</div>
+            <div class="rating">Rating: 9.3/10</div>
+            <a href="https://www.mediafire.com/file_premium/i1ma23cvdvy1efd/TeraBox_Premium_v3.39.0_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 25: Office App Premium Apk-->
+         <div class="app-container" data-name="Office App Premium Apk">
+            <img src="office.jpg" alt="Office App Premium Apk">
+            <div class="app-name">Office App Premium Apk</div>
+            <div class="rating">Rating: 10/10</div>
+            <a href="https://www.mediafire.com/file_premium/q3fpjkb1i6go7ib/Office_App_Pro_v300507_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 26: WPS Office MOD APK (Premium desbloqueado)-->
+         <div class="app-container" data-name="WPS Office MOD APK (Premium desbloqueado)">
+            <img src="wps.jpg" alt="WPS Office MOD APK (Premium desbloqueado)">
+            <div class="app-name">WPS Office MOD APK (Premium desbloqueado)</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://www.mediafire.com/file_premium/w8q77qo7wm6hxx0/WPS_Office_Premium_v18.14.2_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 27: Clash of Clans MOD APK (Unlimited Money, Resources)-->
+        <div class="app-container" data-name="Clash of Clans MOD APK (Unlimited Money, Resources)">
+            <img src="coc.jpg" alt="Clash of Clans MOD APK (Unlimited Money, Resources)">
+            <div class="app-name">Clash of Clans MOD APK (Unlimited Money, Resources)</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://www.mediafire.com/file_premium/dakb0zo4b6bg4ew/Clash_of_Clans_v16.654.6_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+        <!-- App 28: Clash Royale Mod Apk (Unlimited Resources)-->
+        <div class="app-container" data-name="Clash Royale Mod Apk (Unlimited Resources)">
+            <img src="royal.jpg" alt="Clash Royale Mod Apk (Unlimited Resources)">
+            <div class="app-name">Clash Royale Mod Apk (Unlimited Resources)</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://www.mediafire.com/file_premium/f2dxeid7fhfg4yn/Clash_Royale_v80256051_luchitoapk.com.apk/file" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+
+         <!-- App 29: Desi Cinema tv -->
+         <div class="app-container" data-name="Desi Cinema tv">
+            <img src="desi.jpg" alt="Desi Cinema tv">
+            <div class="app-name">Desi Cinema tv</div>
+            <div class="rating">Rating: 9/10</div>
+            <a href="https://desicinemas.tv/" download>
+                <button class="download-btn">Downloads</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-content" id="chat-content"></div>
+        <div class="chat-input-container">
+            <input type="text" id="user-input" class="chat-input" placeholder="Ask questions about the web">
+            <button class="send-button" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let isNox = true; // Flag to toggle between Nox! and Lumos!
+
+        // Toggle Nox! and Lumos! modal text
+        function toggleModal() {
+            const modal = document.getElementById('modal');
+            const modalText = document.getElementById('modalText');
+            isNox = !isNox;
+
+            modalText.textContent = isNox ? 'Nox!' : 'Lumos!';
+            modal.style.display = 'block';
+
+            setTimeout(function() {
+                modal.style.display = 'none';
+            }, 2000);
+        }
+
+        // Function to search apps or games
+        function searchItems() {
+            const searchInput = document.getElementById('searchBar').value.toLowerCase();
+            const appsContainer = document.getElementById('appsContainer');
+            const apps = appsContainer.getElementsByClassName('app-container');
+
+            Array.from(apps).forEach(app => {
+                const appName = app.getAttribute('data-name').toLowerCase();
+                if (appName.includes(searchInput)) {
+                    app.style.display = "block"; // Show matching app/game
+                } else {
+                    app.style.display = "none"; // Hide non-matching app/game
+                }
+            });
+        }
+
+        // Toggle chat visibility when "App GPT" is clicked
+        function toggleChat() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.style.display = chatContainer.style.display === "block" ? "none" : "block";
+        }
+
+        // Function to create message elements
+        function createMessageElement(message, fromUser) {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+            messageElement.classList.add(fromUser ? "user-message" : "bot-message");
+            messageElement.textContent = message;
+
+            return messageElement;
+        }
+
+        // Function to handle user input and send request to API
+        async function sendMessage() {
+            const userMessage = document.getElementById('user-input').value.trim();
+            if (!userMessage) return;
+
+            const chatContent = document.getElementById('chat-content');
+            chatContent.appendChild(createMessageElement(userMessage, true)); // Add user message
+            document.getElementById('user-input').value = ""; // Clear input field
+
+            const botResponse = await fetchResponse(userMessage);
+            chatContent.appendChild(createMessageElement(botResponse, false)); // Add bot response
+        }
+
+        // Fetch response from the API
+        async function fetchResponse(userMessage) {
+            try {
+                const response = await fetch("https://backend.buildpicoapps.com/aero/run/llm-api?pk=v1-Z0FBQUFBQm5IZkJDMlNyYUVUTjIyZVN3UWFNX3BFTU85SWpCM2NUMUk3T2dxejhLSzBhNWNMMXNzZlp3c09BSTR6YW1Sc1BmdGNTVk1GY0liT1RoWDZZX1lNZlZ0Z1dqd3c9PQ==", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        prompt: userMessage
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error("Error:", response.statusText);
+                    return "There was an error. Please try again later.";
+                }
+
+                const data = await response.json();
+                return data.status === "success" ? data.text : "There was an error. Please try again later.";
+            } catch (error) {
+                console.error("Error:", error);
+                return "There was an error. Please try again later.";
+            }
+        }
+    </script>
+
+</body>
+</html>
